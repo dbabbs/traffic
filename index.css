@@ -1,0 +1,125 @@
+:root {
+   --background: #1A181A;
+   --secondary-background: #1E1E1E;
+   --secondary-text: #7F7F7F;
+   --line-color: #6D6D6D;
+
+}
+
+
+body, html { 
+   border: 0; 
+   margin: 0; 
+   padding: 0; 
+   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+   -webkit-font-smoothing: antialiased;
+   -moz-osx-font-smoothing: grayscale;
+}
+
+#map { 
+   height: 100vh; 
+   width: 100vw; 
+}
+
+#sidebar {
+   position: absolute;
+   margin: 15px;
+   padding: 15px;
+   right: 0;
+   background: var(--background);
+   z-index: 50000;
+   border-radius: 2px;
+   width: 290px;
+   font-size: 14px;
+   max-height: calc(100vh - 30px);
+}
+
+h1 {
+   font-size: 19px;
+   font-weight: 500;
+   margin: 0px 0px 15px 0px;
+   color: white;
+}
+
+.desc {
+   font-size: 14px;
+   color: var(--secondary-text);
+}
+
+h2 {
+   font-size: 16px;
+   font-weight: 500;
+   margin: 0px 0px 15px 0;
+   color: white;
+}
+
+.group {
+   margin-bottom: 15px;
+   /* padding-bottom: 15px;
+   border-bottom: 1px solid var(--line-color); */
+}
+
+
+.selector-outside {
+   /* border: 1px solid var(--line-color); */
+   border-radius: 3px;
+   /* box-shadow: 0px 1px 5px var3(--line-color); */
+   height: 30px;
+   width: 100%;
+   background: var(--secondary-background);
+   display: grid;
+   margin: 10px 0;
+   grid-template-columns: repeat(2, 1fr);
+
+}
+
+.selector-option {
+   color: #737373;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   cursor: pointer;
+   font-size: 13px;
+}
+
+.selector-active {
+   border: 1px solid white !important;
+   color: white;
+}
+
+.left-selector {
+   border: 1px solid var(--line-color);
+   border-top-left-radius: 3px;
+   border-bottom-left-radius: 3px;
+}
+
+.left-selector-active {
+   border: 1px solid white !important;
+   color: white;
+}
+
+.right-selector {
+   border: 1px solid var(--line-color);
+   border-top-right-radius: 3px;
+   border-bottom-right-radius: 3px;
+   border-left: none;
+}
+
+.right-selector-active {
+   border: 1px solid white !important;
+   
+   color: white;
+}
+
+.legend-colors {
+   display: grid;
+}
+.legend-item {
+   height: 15px;
+}
+
+.legend-caption {
+   margin-top: 5px;
+   display: flex;
+   justify-content: space-between;
+}
