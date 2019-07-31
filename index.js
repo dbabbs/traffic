@@ -67,22 +67,22 @@ map.addDataSource(traffic).then((evt) => {
          "renderOrder": 200
       }
    });
-   // styles.push({
-   //    "description": "Buildings geometry",
-   //    "when": `$geometryType == 'polygon' && properties.count >= 300000`,
-   //    "technique": "extruded-polygon",
-   //    "attr": {
-   //       "defaultHeight": `662000`,
-   //       "lineColor": '#CECECE',
-   //       "lineWidth": "1",
-   //       "defaultColor": `${colors[colors.length -1]}`,
-   //       "color": `${colors[colors.length -1]}`,
-   //       "roughness": `0.6`,
-   //       "metalness": `0.15`,
-   //       "side": 3,
-   //    },
-   //    "renderOrder": 200
-   // })
+   styles.push({
+      "description": "Buildings geometry",
+      "when": `$geometryType == 'polygon' && properties.count >= 300000`,
+      "technique": "extruded-polygon",
+      "attr": {
+         "defaultHeight": `80000`,
+         "lineColor": '#CECECE',
+         "lineWidth": "1",
+         "defaultColor": `${colors[colors.length -1]}`,
+         "color": `${colors[colors.length -1]}`,
+         "roughness": `0.6`,
+         "metalness": `0.15`,
+         "side": 3,
+      },
+      "renderOrder": 200
+   })
    
    traffic.setStyleSet(styles);
    map.update();
