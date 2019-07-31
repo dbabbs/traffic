@@ -106,7 +106,7 @@ function manageTabs(evt) {
 
 map.addEventListener(
    harp.MapViewEventNames.Render, 
-   () => animating && map.lookAt(options.coordinates, options.distance, options.tilt, (options.azimuth += 0.07))
+   () => animating && map.lookAt(options.coordinates, options.distance, options.tilt, (options.azimuth += 0.04))
 );
 map.beginAnimation();
 
