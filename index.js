@@ -1,8 +1,10 @@
 const $ = (q) => document.querySelector(q);
 const $$ = (q) => document.querySelectorAll(q);
 
-const token = 'ASCBZnCcvEMa-vbk9JXixN8'
-const space = `mpZkNWzk`
+const config = {
+   token: 'ASCBZnCcvEMa-vbk9JXixN8',
+   space: 'mpZkNWzk'
+}
 
 const map = new harp.MapView({
    canvas: $("#map"),
@@ -26,25 +28,23 @@ const omvDataSource = new harp.OmvDataSource({
    baseUrl: "https://xyz.api.here.com/tiles/herebase.02",
    apiFormat: harp.APIFormat.XYZOMV,
    styleSetName: "tilezen",
-   authenticationCode: token,
+   authenticationCode: config.token,
 });
 map.addDataSource(omvDataSource);
 
 const traffic = new harp.OmvDataSource({
-   baseUrl: "https://xyz.api.here.com/hub/spaces/" + space + "/tile/web",
+   baseUrl: "https://xyz.api.here.com/hub/spaces/" + config.space + "/tile/web",
    apiFormat: harp.APIFormat.XYZSpace,
-   authenticationCode: token, //Use this token!
+   authenticationCode: config.token,
 });
 
-
 const colors = ['#ffffcc','#c7e9b4','#7fcdbb','#41b6c4','#1d91c0','#225ea8','#0c2c84'];
+const buckets = [0, 25000, 50000, 75000, 100000, 125000, 150000, 175000];
+const heights = [100, 3000, 6000, 9000, 12000, 15000, 19000];
+const bucketsSliced = buckets.slice(0, buckets.length - 1);
 
-map.addDataSource(traffic).then((evt) => {
+map.addDataSource(traffic).then(() => {
 
-   const buckets = [0, 25000, 50000, 75000, 100000, 125000, 150000, 175000];
-
-   const heights = [100, 3000, 6000, 9000, 12000, 15000, 19000];
-   const bucketsSliced = buckets.slice(0, buckets.length - 1)
    const styles = bucketsSliced.map((bucket, index) => {
       const filter = index !== bucketsSliced.length - 1  ?
          `properties.count >= ${bucket} && properties.count < ${buckets[index + 1]}` :
@@ -72,7 +72,7 @@ map.addDataSource(traffic).then((evt) => {
       "when": `$geometryType == 'polygon' && properties.count >= 300000`,
       "technique": "extruded-polygon",
       "attr": {
-         "defaultHeight": `80000`,
+         "defaultHeight": "80000",
          "lineColor": '#CECECE',
          "lineWidth": "1",
          "defaultColor": `${colors[colors.length -1]}`,
@@ -83,7 +83,6 @@ map.addDataSource(traffic).then((evt) => {
       },
       "renderOrder": 200
    })
-   
    traffic.setStyleSet(styles);
    map.update();
 });
@@ -110,13 +109,35 @@ map.addEventListener(
 );
 map.beginAnimation();
 
-
-const legendColors = $('.legend-colors');
 $('.legend-colors').style.gridTemplateColumns = `repeat(${colors.length}, 1fr)`;
 $('.legend-caption').style.gridTemplateColumns = `repeat(${colors.length}, 1fr)`;
 colors.forEach(color => {
    const div = document.createElement('div');
    div.style.background = color;
    div.classList.add('legend-item');
-   legendColors.appendChild(div);
+   $('.legend-colors').appendChild(div);
 });
+
+$('#year').innerText = new Date().getFullYear();
+
+map.canvas.onmousedown = () => {
+   console.log('mouse down')
+
+   
+   //Nino, What I'm trying to do here:
+   //When the map is rotating and the user drags it around, I would like the map to move
+   //See comment below for continuation...
+   animating = false;
+}
+
+map.canvas.onmouseup = () => {
+   console.log('focus up')
+
+   //However when the user stops dragging the map, I would like the rotation animation
+   //to continue where they left off. So that's why I'm resetting the coordinates.
+   //However, since map.lookAt() calculates a different pitch/angle view coordinates,
+   //i am unable to access the correct view center
+   //Do you know of a way to get the current map's map.lookAt() configuration information?
+   // options.coordinates = map.geoCenter;
+   animating = true;
+}

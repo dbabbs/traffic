@@ -6,7 +6,6 @@
 
 }
 
-
 body, html { 
    border: 0; 
    margin: 0; 
@@ -32,6 +31,16 @@ body, html {
    width: 290px;
    font-size: 14px;
    max-height: calc(100vh - 30px);
+}
+
+a {
+   color: #BBBBBB;
+   text-decoration: none;
+}
+
+a:hover {
+   color: white;
+   transition: .3s all;
 }
 
 h1 {
@@ -81,7 +90,9 @@ h2 {
    border: 1px solid white !important;
    color: white;
 }
-
+.left-selector, .right-selector {
+   transition: .3s all;
+}
 .left-selector {
    border: 1px solid var(--line-color);
    border-top-left-radius: 3px;
@@ -119,4 +130,5 @@ h2 {
 
 .legend-caption .desc {
    font-size: 12px !important;
+   margin-bottom: 0;
 }
