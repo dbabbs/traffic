@@ -140,8 +140,10 @@ colors.forEach(color => {
 
 $('#year').innerText = new Date().getFullYear();
 
-map.canvas.onmousedown = e => {   
+map.canvas.onmousedown = e => { 
+
    animating = false;
+   
 
    const intersections = map.intersectMapObjects(e.clientX, e.clientY);
    intersections.forEach( i => {
@@ -167,8 +169,4 @@ map.canvas.onmouseup = () => {
       options.tilt = pitch * 180 / Math.PI;
       animating = true;
    }
-   // Unfortunately there is no easy way to get the look at configuration right now.
-   // We have getCameraCoordinatesFromTargetCoordinates in MapUtils but unfortunately
-   // not the inverse. Luckily we have all we need in MapUtils.
-   
 }
