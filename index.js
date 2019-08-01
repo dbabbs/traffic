@@ -15,7 +15,7 @@ const controls = new harp.MapControls(map);
 window.onresize = () => map.resize(window.innerWidth, window.innerHeight);
 
 const options = { 
-   tilt: 45, 
+   tilt: 40, 
    distance: 280000, 
    coordinates: new harp.GeoCoordinates(37.743573, -121.868387),
    azimuth: 0
