@@ -24,15 +24,15 @@ const options = {
 map.lookAt(options.coordinates, options.distance, options.tilt, options.azimuth);
 controls.maxPitchAngle = 60;
 
-// const omvDataSource = new harp.OmvDataSource({
-//    name: "basemap",
-//    baseUrl: "https://xyz.api.here.com/tiles/herebase.02",
-//    apiFormat: harp.APIFormat.XYZOMV,
-//    styleSetName: "tilezen",
-//    authenticationCode: config.token,
-//    gatherFeatureIds: true
-// });
-// map.addDataSource(omvDataSource);
+const omvDataSource = new harp.OmvDataSource({
+   name: "basemap",
+   baseUrl: "https://xyz.api.here.com/tiles/herebase.02",
+   apiFormat: harp.APIFormat.XYZOMV,
+   styleSetName: "tilezen",
+   authenticationCode: config.token,
+   gatherFeatureIds: true
+});
+map.addDataSource(omvDataSource);
 
 const traffic = new harp.OmvDataSource({
    name: "traffic",
@@ -105,6 +105,7 @@ map.addDataSource(traffic).then(() => {
 });
 
 let animating = false;
+let animationSelected = false;
 $$('.selector-option').forEach(q => q.onclick = manageTabs);
 
 function manageTabs(evt) {
@@ -112,10 +113,12 @@ function manageTabs(evt) {
       $('.left-selector').classList.remove('left-selector-active');
       $('.right-selector').classList.add('right-selector-active');
       animating = true;
+      animationSelected = true;
    } else {
       $('.left-selector').classList.add('left-selector-active');
       $('.right-selector').classList.remove('right-selector-active');
       animating = false;
+      animationSelected = false;
       map.lookAt(options.coordinates, options.distance, options.tilt, options.azimuth)
    }
 }
@@ -157,12 +160,15 @@ map.canvas.onmousedown = e => {
 }
 
 map.canvas.onmouseup = () => {
+   if (animationSelected) {
+      options.coordinates = harp.MapViewUtils.rayCastGeoCoordinates(map, 0, 0);   
+      const {yaw, pitch} = harp.MapViewUtils.extractYawPitchRoll(map.camera.quaternion);
+      options.azimuth = -yaw * 180 / Math.PI;
+      options.tilt = pitch * 180 / Math.PI;
+      animating = true;
+   }
    // Unfortunately there is no easy way to get the look at configuration right now.
    // We have getCameraCoordinatesFromTargetCoordinates in MapUtils but unfortunately
    // not the inverse. Luckily we have all we need in MapUtils.
-   options.coordinates = harp.MapViewUtils.rayCastGeoCoordinates(map, 0, 0);   
-   const {yaw, pitch} = harp.MapViewUtils.extractYawPitchRoll(map.camera.quaternion);
-   options.azimuth = -yaw * 180 / Math.PI;
-   options.tilt = pitch * 180 / Math.PI;
-   animating = true;
+   
 }
