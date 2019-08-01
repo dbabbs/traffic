@@ -19,7 +19,7 @@ const options = {
    azimuth: 0
 }
 
-map.setCameraGeolocationAndZoom(options.coordinates, 9);
+map.lookAt(options.coordinates, options.distance, options.tilt, options.azimuth);
 controls.maxPitchAngle = 60;
 
 const omvDataSource = new harp.OmvDataSource({
@@ -100,7 +100,7 @@ function manageTabs(evt) {
       $('.left-selector').classList.add('left-selector-active');
       $('.right-selector').classList.remove('right-selector-active');
       animating = false;
-      map.lookAt(options.coordinates, options.distance, 0, 0)
+      map.lookAt(options.coordinates, options.distance, options.tilt, options.azimuth)
    }
 }
 
