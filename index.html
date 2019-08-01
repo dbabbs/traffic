@@ -3,8 +3,16 @@
       <link rel="stylesheet" type="text/css" href="index.css">
       
       <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.9.7/d3.js"></script>
-      <script src="https://unpkg.com/three/build/three.min.js"></script>
+      <script src="https://unpkg.com/three@0.105.2/build/three.min.js"></script>
       <script src="https://unpkg.com/@here/harp.gl/dist/harp.js"></script>
+
+      <!--Using harp.gl and three.js installed via npm/yarn-->
+      <!-- <script src="node_modules/three/build/three.min.js"></script> -->
+      <!-- <script src="node_modules/@here/harp.gl/dist/harp.js"></script> -->
+
+      <!--Using latest master version of harp. This does unfortunately not work b/c
+          the decoder bundle cannot be loaded due to cors policy-->
+      <!--script src="https://www.harp.gl/docs/master/examples/harp.js"></script-->
    </head>
    <body>
       <div id="sidebar">

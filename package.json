@@ -1,0 +1,10 @@
+{
+  "name": "traffic",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:dbabbs/traffic.git",
+  "license": "MIT",
+  "dependencies": {
+    "@here/harp.gl": "^0.2.4"
+  }
+}

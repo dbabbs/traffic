@@ -24,18 +24,22 @@ const options = {
 map.lookAt(options.coordinates, options.distance, options.tilt, options.azimuth);
 controls.maxPitchAngle = 60;
 
-const omvDataSource = new harp.OmvDataSource({
-   baseUrl: "https://xyz.api.here.com/tiles/herebase.02",
-   apiFormat: harp.APIFormat.XYZOMV,
-   styleSetName: "tilezen",
-   authenticationCode: config.token,
-});
-map.addDataSource(omvDataSource);
+// const omvDataSource = new harp.OmvDataSource({
+//    name: "basemap",
+//    baseUrl: "https://xyz.api.here.com/tiles/herebase.02",
+//    apiFormat: harp.APIFormat.XYZOMV,
+//    styleSetName: "tilezen",
+//    authenticationCode: config.token,
+//    gatherFeatureIds: true
+// });
+// map.addDataSource(omvDataSource);
 
 const traffic = new harp.OmvDataSource({
+   name: "traffic",
    baseUrl: "https://xyz.api.here.com/hub/spaces/" + config.space + "/tile/web",
    apiFormat: harp.APIFormat.XYZSpace,
    authenticationCode: config.token,
+   gatherFeatureIds: true
 });
 
 const colors = ['#ffffcc','#c7e9b4','#7fcdbb','#41b6c4','#1d91c0','#225ea8','#0c2c84'];
@@ -55,14 +59,26 @@ map.addDataSource(traffic).then(() => {
          "when": `$geometryType == 'polygon' && ${filter}`,
          "technique": "extruded-polygon",
          "attr": {
+            "userData": `${index}`,
             "defaultHeight": `${heights[index]}`,
+            "constantHeight": true, //This is needed to avoid the "steps" between tile borders
             "lineColor": '#CECECE',
             "lineWidth": "1",
             "defaultColor": `${colors[index]}`,
             "color": `${colors[index]}`,
             "roughness": `0.6`,
             "metalness": `0.15`,
-            "side": 3,
+            "side": 2, // 2 is double sided and fixes your issue.
+            //Still not clear to me why the faces have wrong orientation.
+            //Interestinly not all of them have wrong orientation. The roof has correct orientation.
+
+            // To get rid of the z-fighting with the background close to the horizon I disabled the
+            // depth test for the flat hexagons. Unfortunately this only works within one tile.
+            // You can see the flat hexagon from the neighboring tile through the hexagons of another tile.
+            //"depthTest": index === 0 ? false : true
+
+            // Right now I see no way to fix it unless we have a new release that contains this fix:
+            // https://github.com/heremaps/harp.gl/pull/658
          },
          "renderOrder": 200
       }
@@ -72,6 +88,7 @@ map.addDataSource(traffic).then(() => {
       "when": `$geometryType == 'polygon' && properties.count >= 300000`,
       "technique": "extruded-polygon",
       "attr": {
+         "userData": `${colors.length -1}`,
          "defaultHeight": "80000",
          "lineColor": '#CECECE',
          "lineWidth": "1",
@@ -79,7 +96,7 @@ map.addDataSource(traffic).then(() => {
          "color": `${colors[colors.length -1]}`,
          "roughness": `0.6`,
          "metalness": `0.15`,
-         "side": 3,
+         "side": 2, // same as above
       },
       "renderOrder": 200
    })
@@ -120,24 +137,32 @@ colors.forEach(color => {
 
 $('#year').innerText = new Date().getFullYear();
 
-map.canvas.onmousedown = () => {
-   console.log('mouse down')
-
-   
-   //Nino, What I'm trying to do here:
-   //When the map is rotating and the user drags it around, I would like the map to move
-   //See comment below for continuation...
+map.canvas.onmousedown = e => {   
    animating = false;
+
+   const intersections = map.intersectMapObjects(e.clientX, e.clientY);
+   intersections.forEach( i => {
+      // The user data should give you the id of the feature that was clicked,
+      // but it seems your data-source is not providing these ids.
+      // Once you have the ids you could go through your data and find the belonging
+      // object.
+      console.log(i.intersection.object.userData);
+
+      // If you just want to distinguish what kind of event was clicked, you can add some
+      // dummy attribute to the technique(I called it userData, but you can call it whatever
+      // you want but it should not overlap with any already defined property of the THREE.js
+      // standard material).
+      console.log(i.intersection.object.material.userData);
+   });
 }
 
 map.canvas.onmouseup = () => {
-   console.log('focus up')
-
-   //However when the user stops dragging the map, I would like the rotation animation
-   //to continue where they left off. So that's why I'm resetting the coordinates.
-   //However, since map.lookAt() calculates a different pitch/angle view coordinates,
-   //i am unable to access the correct view center
-   //Do you know of a way to get the current map's map.lookAt() configuration information?
-   // options.coordinates = map.geoCenter;
+   // Unfortunately there is no easy way to get the look at configuration right now.
+   // We have getCameraCoordinatesFromTargetCoordinates in MapUtils but unfortunately
+   // not the inverse. Luckily we have all we need in MapUtils.
+   options.coordinates = harp.MapViewUtils.rayCastGeoCoordinates(map, 0, 0);   
+   const {yaw, pitch} = harp.MapViewUtils.extractYawPitchRoll(map.camera.quaternion);
+   options.azimuth = -yaw * 180 / Math.PI;
+   options.tilt = pitch * 180 / Math.PI;
    animating = true;
 }
