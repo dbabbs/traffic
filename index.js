@@ -10,6 +10,7 @@ const map = new harp.MapView({
    canvas: $("#map"),
    theme: "theme/style.json",
 });
+map.minZoomLevel = 8;
 const controls = new harp.MapControls(map);
 
 window.onresize = () => map.resize(window.innerWidth, window.innerHeight);
