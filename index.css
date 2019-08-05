@@ -3,7 +3,7 @@
    --secondary-background: #1E1E1E;
    --secondary-text: #7F7F7F;
    --line-color: #6D6D6D;
-   --border-radius: 2px;
+   --border-radius: 3px;
 
 }
 
@@ -146,7 +146,7 @@ h2 {
    top: 0;
    left: 0;
    padding: 10px;
-   font-size: 13px;
+   font-size: 14px;
    pointer-events: none;
    /* transition: .1s all; */
 }

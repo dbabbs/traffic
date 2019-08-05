@@ -163,5 +163,9 @@ map.canvas.onmousemove = e => {
    $('#tooltip').style.display = 'block';
    $('#tooltip').style.left = e.clientX + 'px';
    $('#tooltip').style.top = e.clientY + 'px';
-   $('#tooltip').innerHTML = i.userData['properties.count'];
+   $('#tooltip').innerHTML = numberWithCommas(i.userData['properties.count']) + '<span class="desc"> trip departures from this location</span>';
+}
+
+function numberWithCommas(x) {
+   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
