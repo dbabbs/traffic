@@ -146,25 +146,24 @@ map.canvas.onmousedown = e => {
    
 
    const intersections = map.intersectMapObjects(e.clientX, e.clientY);
+   if (intersections === undefined) {
+      return;
+   }
    intersections.forEach( i => {
       // The user data should give you the id of the feature that was clicked,
       // but it seems your data-source is not providing these ids.
       // Once you have the ids you could go through your data and find the belonging
       // object.
-      console.log(i.intersection.object.userData);
-
-      // If you just want to distinguish what kind of event was clicked, you can add some
-      // dummy attribute to the technique(I called it userData, but you can call it whatever
-      // you want but it should not overlap with any already defined property of the THREE.js
-      // standard material).
-      console.log(i.intersection.object.material.userData);
+      if (i.intersection.object.userData.dataSource == "traffic") {
+         console.log(i.userData);
+      }
    });
 }
 
 map.canvas.onmouseup = () => {
    if (animationSelected) {
       options.coordinates = harp.MapViewUtils.rayCastGeoCoordinates(map, 0, 0);   
-      const {yaw, pitch} = harp.MapViewUtils.extractYawPitchRoll(map.camera.quaternion);
+      const {yaw, pitch} = harp.MapViewUtils.extractYawPitchRoll(map.camera.quaternion, map.projection.type);
       options.azimuth = -yaw * 180 / Math.PI;
       options.tilt = pitch * 180 / Math.PI;
       animating = true;
