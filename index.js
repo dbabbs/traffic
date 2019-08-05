@@ -68,17 +68,7 @@ map.addDataSource(traffic).then(() => {
             "color": `${colors[index]}`,
             "roughness": `0.6`,
             "metalness": `0.15`,
-            "side": 2, // 2 is double sided and fixes your issue.
-            //Still not clear to me why the faces have wrong orientation.
-            //Interestinly not all of them have wrong orientation. The roof has correct orientation.
-
-            // To get rid of the z-fighting with the background close to the horizon I disabled the
-            // depth test for the flat hexagons. Unfortunately this only works within one tile.
-            // You can see the flat hexagon from the neighboring tile through the hexagons of another tile.
-            //"depthTest": index === 0 ? false : true
-
-            // Right now I see no way to fix it unless we have a new release that contains this fix:
-            // https://github.com/heremaps/harp.gl/pull/658
+            "side": 2
          },
          "renderOrder": 200
       }
@@ -141,31 +131,37 @@ colors.forEach(color => {
 $('#year').innerText = new Date().getFullYear();
 
 map.canvas.onmousedown = e => { 
-
    animating = false;
-   
-
-   const intersections = map.intersectMapObjects(e.clientX, e.clientY);
-   if (intersections === undefined) {
-      return;
-   }
-   intersections.forEach( i => {
-      // The user data should give you the id of the feature that was clicked,
-      // but it seems your data-source is not providing these ids.
-      // Once you have the ids you could go through your data and find the belonging
-      // object.
-      if (i.intersection.object.userData.dataSource == "traffic") {
-         console.log(i.userData);
-      }
-   });
 }
 
 map.canvas.onmouseup = () => {
    if (animationSelected) {
       options.coordinates = harp.MapViewUtils.rayCastGeoCoordinates(map, 0, 0);   
-      const {yaw, pitch} = harp.MapViewUtils.extractYawPitchRoll(map.camera.quaternion, map.projection.type);
+      const { yaw, pitch } = harp.MapViewUtils.extractYawPitchRoll(map.camera.quaternion, map.projection.type);
       options.azimuth = -yaw * 180 / Math.PI;
       options.tilt = pitch * 180 / Math.PI;
       animating = true;
    }
+}
+
+map.canvas.onmousemove = e => {
+   const intersections = map.intersectMapObjects(e.clientX, e.clientY);
+
+   if (intersections === undefined) {
+      $('#tooltip').style.display = 'none';
+      return;
+   }
+   const i = intersections.find(x => {
+      return x.hasOwnProperty('userData') && x.userData.$layer === config.space
+   });
+
+   if (i === undefined) {
+      $('#tooltip').style.display = 'none';
+      return;
+   }
+
+   $('#tooltip').style.display = 'block';
+   $('#tooltip').style.left = e.clientX + 'px';
+   $('#tooltip').style.top = e.clientY + 'px';
+   $('#tooltip').innerHTML = i.userData['properties.count'];
 }
