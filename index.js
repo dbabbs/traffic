@@ -1,10 +1,18 @@
 const $ = (q) => document.querySelector(q);
 const $$ = (q) => document.querySelectorAll(q);
 
+//old: (working) mpZkNWzk
 const config = {
    token: 'ASCBZnCcvEMa-vbk9JXixN8',
-   space: 'mpZkNWzk'
+   space: 'pd6lpVsy', //'0N3BxcpG'
 }
+
+fetch('https://xyz.api.here.com/hub/spaces/pd6lpVsy/search?clientId=cli&access_token=AFCeWUYTFLKwbATv8IkVKKM')
+.then(res => res.json())
+.then(data => {
+   console.log(data)
+})
+
 
 const map = new harp.MapView({
    canvas: $("#map"),
@@ -43,18 +51,23 @@ const traffic = new harp.OmvDataSource({
    gatherFeatureIds: true
 });
 
-const colors = ['#ffffcc','#c7e9b4','#7fcdbb','#41b6c4','#1d91c0','#225ea8','#0c2c84'];
-const buckets = [0, 25000, 50000, 75000, 100000, 125000, 150000, 175000];
-const heights = [100, 3000, 6000, 9000, 12000, 15000, 19000];
-const bucketsSliced = buckets.slice(0, buckets.length - 1);
+const max = 40062;
+// const colors = ['#ffffcc','#c7e9b4','#7fcdbb','#41b6c4','#1d91c0','#225ea8','#0c2c84'];
+// const colors = ['#feebe2','#fcc5c0','#fa9fb5','#f768a1','#dd3497','#ae017e','#7a0177']
+const colors = ['#fff7f3','#fde0dd','#fcc5c0','#fa9fb5','#f768a1','#dd3497','#ae017e','#7a0177','#49006a']
+const numBuckets = colors.length;
 
+const buckets = Array(colors.length + 1).fill(0).map((x,i) =>  (max / numBuckets) * i);
+console.log(buckets);
+// const heights = [100, 4000, 8000, 12000, 16000, 20000, 24000];
+const heights = Array(colors.length + 1).fill(0).map((x,i) => i * 4000);
+console.log(heights);
 map.addDataSource(traffic).then(() => {
 
-   const styles = bucketsSliced.map((bucket, index) => {
-      const filter = index !== bucketsSliced.length - 1  ?
-         `properties.count >= ${bucket} && properties.count < ${buckets[index + 1]}` :
-         `properties.count >= ${bucket} && properties.count < 300000`;
-
+   const styles = buckets.slice(0, buckets.length - 1).map((bucket, index) => {
+      const filter = index !== buckets.length - 2 ?
+         `properties.sum >= ${bucket} && properties.sum < ${buckets[index + 1]}` : 
+         `properties.sum >= ${bucket}`// && properties.sum < ${buckets[index + 1] + 1}`;
       return {
          "description": "Buildings geometry",
          "when": `$geometryType == 'polygon' && ${filter}`,
@@ -64,7 +77,7 @@ map.addDataSource(traffic).then(() => {
             "defaultHeight": `${heights[index]}`,
             "constantHeight": true, //This is needed to avoid the "steps" between tile borders
             "lineColor": '#CECECE',
-            "lineWidth": "1",
+            "lineWidth": index === 0 ? "0.1" : "0",
             "defaultColor": `${colors[index]}`,
             "color": `${colors[index]}`,
             "roughness": `0.6`,
@@ -74,23 +87,7 @@ map.addDataSource(traffic).then(() => {
          "renderOrder": 200
       }
    });
-   styles.push({
-      "description": "Buildings geometry",
-      "when": `$geometryType == 'polygon' && properties.count >= 300000`,
-      "technique": "extruded-polygon",
-      "attr": {
-         "userData": `${colors.length -1}`,
-         "defaultHeight": "80000",
-         "lineColor": '#CECECE',
-         "lineWidth": "1",
-         "defaultColor": `${colors[colors.length -1]}`,
-         "color": `${colors[colors.length -1]}`,
-         "roughness": `0.6`,
-         "metalness": `0.15`,
-         "side": 2, // same as above
-      },
-      "renderOrder": 200
-   })
+   // console.log(styles);
    traffic.setStyleSet(styles);
    map.update();
 });
@@ -135,6 +132,13 @@ map.canvas.onmousedown = e => {
    animating = false;
 }
 
+buckets.slice(0, buckets.length -1).forEach(bucket => {
+   const div = document.createElement('div');
+   div.classList.add('desc');
+   div.innerText = (bucket / 1000).toFixed(0) + 'K+';
+   $('.legend-caption').appendChild(div);
+})
+
 map.canvas.onmouseup = () => {
    if (animationSelected) {
       options.coordinates = harp.MapViewUtils.rayCastGeoCoordinates(map, 0, 0);   
@@ -164,7 +168,7 @@ map.canvas.onmousemove = e => {
    $('#tooltip').style.display = 'block';
    $('#tooltip').style.left = e.clientX + 'px';
    $('#tooltip').style.top = e.clientY + 'px';
-   $('#tooltip').innerHTML = numberWithCommas(i.userData['properties.count']) + '<span class="desc"> trip departures from this location</span>';
+   $('#tooltip').innerHTML = numberWithCommas(i.userData['properties.sum']) + '<span class="desc"> trip departures from this location</span>';
 }
 
 function numberWithCommas(x) {
