@@ -24,10 +24,10 @@ const controls = new harp.MapControls(map);
 window.onresize = () => map.resize(window.innerWidth, window.innerHeight);
 
 const options = { 
-   tilt: 40, 
+   tilt: 50, 
    distance: 280000, 
    coordinates: new harp.GeoCoordinates(37.743573, -121.868387),
-   azimuth: 0
+   azimuth: 30
 }
 
 map.lookAt(options.coordinates, options.distance, options.tilt, options.azimuth);
@@ -55,6 +55,7 @@ const max = 40062;
 // const colors = ['#ffffcc','#c7e9b4','#7fcdbb','#41b6c4','#1d91c0','#225ea8','#0c2c84'];
 // const colors = ['#feebe2','#fcc5c0','#fa9fb5','#f768a1','#dd3497','#ae017e','#7a0177']
 const colors = ['#fff7f3','#fde0dd','#fcc5c0','#fa9fb5','#f768a1','#dd3497','#ae017e','#7a0177','#49006a']
+// const colors = ['#f7fcf0','#e0f3db','#ccebc5','#a8ddb5','#7bccc4','#4eb3d3','#2b8cbe','#0868ac','#084081']
 const numBuckets = colors.length;
 
 const buckets = Array(colors.length + 1).fill(0).map((x,i) =>  (max / numBuckets) * i);
@@ -140,37 +141,71 @@ buckets.slice(0, buckets.length -1).forEach(bucket => {
 })
 
 map.canvas.onmouseup = () => {
+   options.coordinates = harp.MapViewUtils.rayCastGeoCoordinates(map, 0, 0);   
+   const { yaw, pitch } = harp.MapViewUtils.extractYawPitchRoll(map.camera.quaternion, map.projection.type);
+   options.azimuth = -yaw * 180 / Math.PI;
+   options.tilt = pitch * 180 / Math.PI;
    if (animationSelected) {
-      options.coordinates = harp.MapViewUtils.rayCastGeoCoordinates(map, 0, 0);   
-      const { yaw, pitch } = harp.MapViewUtils.extractYawPitchRoll(map.camera.quaternion, map.projection.type);
-      options.azimuth = -yaw * 180 / Math.PI;
-      options.tilt = pitch * 180 / Math.PI;
       animating = true;
    }
 }
 
-map.canvas.onmousemove = e => {
+const geocodes = {
+
+}
+let prevId = '';
+map.canvas.onmousemove = async e => {
    const intersections = map.intersectMapObjects(e.clientX, e.clientY);
 
    if (intersections === undefined) {
       $('#tooltip').style.display = 'none';
       return;
    }
-   const i = intersections.find(x => {
-      return x.hasOwnProperty('userData') && x.userData.$layer === config.space
-   });
+   const i = intersections.find(x => x.hasOwnProperty('userData') && x.userData.$layer === config.space);
 
    if (i === undefined) {
       $('#tooltip').style.display = 'none';
       return;
    }
-
+   
    $('#tooltip').style.display = 'block';
    $('#tooltip').style.left = e.clientX + 'px';
    $('#tooltip').style.top = e.clientY + 'px';
-   $('#tooltip').innerHTML = numberWithCommas(i.userData['properties.sum']) + '<span class="desc"> trip departures from this location</span>';
+
+   const currId = i.userData.$id;
+   if (currId !== prevId) {
+      const label = geocodes[currId];
+      if (label === undefined) {
+         const coordinates = [i.userData['properties.centroid.1'], i.userData['properties.centroid.0']];
+         $('#tooltip .city').innerHTML = await geocode(coordinates, currId);
+      } else {
+         $('#tooltip .city').innerHTML = label;
+      }
+      $('#tooltip .count').innerHTML =  numberWithCommas(i.userData['properties.sum']) + '<span class="desc"> trip departures</span>';
+   }
+   prevId = currId;
 }
 
 function numberWithCommas(x) {
    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+async function geocode([latitude, longitude], id) {
+   const here = {
+      id: 'Wf3z49YJK9ieJhsun9Wx',
+      code: '8T7Stg2Jq1qvkfBn3Za4qw'
+   }
+   const url = `https://reverse.geocoder.api.here.com/6.2/reversegeocode.json?prox=${latitude},${longitude}&mode=retrieveAreas&app_id=${here.id}&app_code=${here.code}`
+
+   const response = await fetch(url).then(res => res.json());
+   if (response.Response.View[0].Result.length > 0) {
+      const address = response.Response.View[0].Result[0].Location.Address;
+      if (address.City === undefined) {
+         return '';
+      }
+      geocodes[id] = address.City + ', ' + address.State;
+      return address.City + ', ' + address.State;
+   } else {
+      return '';
+   }
 }
