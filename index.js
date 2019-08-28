@@ -169,8 +169,8 @@ map.canvas.onmousemove = async e => {
    }
    
    $('#tooltip').style.display = 'block';
-   $('#tooltip').style.left = e.clientX + 'px';
-   $('#tooltip').style.top = e.clientY + 'px';
+   $('#tooltip').style.left = e.clientX + 5 + 'px';
+   $('#tooltip').style.top = e.clientY + 5 + 'px';
 
    const currId = i.userData.$id;
    if (currId !== prevId) {
