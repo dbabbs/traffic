@@ -124,7 +124,7 @@ map.canvas.onmousedown = e => {
 buckets.slice(0, buckets.length -1).forEach(bucket => {
    const div = document.createElement('div');
    div.classList.add('desc');
-   div.innerText = (bucket / 1000).toFixed(0) + 'K+';
+   div.innerText = (bucket).toFixed(1) + '+';
    $('.legend-caption').appendChild(div);
 })
 
