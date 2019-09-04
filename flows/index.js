@@ -4,9 +4,8 @@ const $$ = (q) => document.querySelectorAll(q);
 //old: (working) mpZkNWzk
 const config = {
    token: 'ASCBZnCcvEMa-vbk9JXixN8',
-   space: 'pd6lpVsy', //'0N3BxcpG'
+   space: 'D3QGt2ZV', //'0N3BxcpG'
 }
-
 
 
 const map = new harp.MapView({
@@ -46,43 +45,37 @@ const traffic = new harp.OmvDataSource({
    gatherFeatureIds: true
 });
 
-const max = 40062;
-// const colors = ['#ffffcc','#c7e9b4','#7fcdbb','#41b6c4','#1d91c0','#225ea8','#0c2c84'];
-// const colors = ['#feebe2','#fcc5c0','#fa9fb5','#f768a1','#dd3497','#ae017e','#7a0177']
-const colors = ['#fff7f3','#fde0dd','#fcc5c0','#fa9fb5','#f768a1','#dd3497','#ae017e','#7a0177','#49006a']
-// const colors = ['#f7fcf0','#e0f3db','#ccebc5','#a8ddb5','#7bccc4','#4eb3d3','#2b8cbe','#0868ac','#084081']
+const max = 3;
+const colors = ['#f7fcf0','#e0f3db','#ccebc5','#a8ddb5','#7bccc4','#4eb3d3','#2b8cbe','#0868ac','#084081']
 const numBuckets = colors.length;
 
 const buckets = Array(colors.length + 1).fill(0).map((x,i) =>  (max / numBuckets) * i);
 console.log(buckets);
-// const heights = [100, 4000, 8000, 12000, 16000, 20000, 24000];
-const heights = Array(colors.length + 1).fill(0).map((x,i) => i * 4000);
-console.log(heights);
+const widths = Array(colors.length + 1).fill(0).map((x,i) => i * 1 + 1);
+const opacities = Array(colors.length + 1).fill(0).map((x,i) => i * 0.1 + 0.1);
+console.log(opacities);
 map.addDataSource(traffic).then(() => {
 
    const styles = buckets.slice(0, buckets.length - 1).map((bucket, index) => {
       const filter = index !== buckets.length - 2 ?
-         `properties.sum >= ${bucket} && properties.sum < ${buckets[index + 1]}` : 
-         `properties.sum >= ${bucket}`// && properties.sum < ${buckets[index + 1] + 1}`;
+         `properties.flow >= ${bucket} && properties.flow < ${buckets[index + 1]}` : 
+         `properties.flow >= ${bucket}`// && properties.sum < ${buckets[index + 1] + 1}`;
+      console.log(filter)
       return {
-         "description": "Buildings geometry",
-         "when": `$geometryType == 'polygon' && ${filter}`,
-         "technique": "extruded-polygon",
+         "when": `$geometryType ^= 'line' && ${filter}`,
+         "renderOrder": 1000,
+         "technique": "solid-line",
          "attr": {
-            "userData": `${index}`,
-            "defaultHeight": `${heights[index]}`,
-            "constantHeight": true, //This is needed to avoid the "steps" between tile borders
-            "lineColor": '#CECECE',
-            "lineWidth": index === 0 ? "0.1" : "0",
-            "defaultColor": `${colors[index]}`,
             "color": `${colors[index]}`,
-            "roughness": `0.6`,
-            "metalness": `0.15`,
-            "side": 2
-         },
-         "renderOrder": 200
+            "transparent": true,
+            "opacity": 1,
+            "metricUnit": "Pixel",
+            "lineWidth": widths[index]
+         }
       }
    });
+   console.table(styles.map(x => x.attr));
+
    // console.log(styles);
    traffic.setStyleSet(styles);
    map.update();
