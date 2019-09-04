@@ -46,12 +46,13 @@ const traffic = new harp.OmvDataSource({
 });
 
 const max = 3;
-const colors = ['#f7fcf0','#e0f3db','#ccebc5','#a8ddb5','#7bccc4','#4eb3d3','#2b8cbe','#0868ac','#084081']
+const colors = ['#d73027','#f46d43','#fdae61','#fee08b','#ffffbf','#d9ef8b','#a6d96a','#66bd63','#1a9850']
+   .reverse();
 const numBuckets = colors.length;
 
 const buckets = Array(colors.length + 1).fill(0).map((x,i) =>  (max / numBuckets) * i);
 console.log(buckets);
-const widths = Array(colors.length + 1).fill(0).map((x,i) => i * 1 + 1);
+const widths = Array(colors.length + 1).fill(0).map((x,i) => i * 0.5 + 1);
 const opacities = Array(colors.length + 1).fill(0).map((x,i) => i * 0.1 + 0.1);
 console.log(opacities);
 map.addDataSource(traffic).then(() => {
@@ -63,7 +64,7 @@ map.addDataSource(traffic).then(() => {
       console.log(filter)
       return {
          "when": `$geometryType ^= 'line' && ${filter}`,
-         "renderOrder": 1000,
+         "renderOrder": 1000 + widths[index],
          "technique": "solid-line",
          "attr": {
             "color": `${colors[index]}`,
