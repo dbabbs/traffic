@@ -11,7 +11,7 @@ const config = {
 
 const map = new harp.MapView({
    canvas: $("#map"),
-   theme: "https://assets.vector.hereapi.com/styles/oslo/night/harp.gl/tilezen",
+   theme: "theme/style.json",
 });
 map.minZoomLevel = 8;
 const controls = new harp.MapControls(map);
