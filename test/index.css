@@ -1,0 +1,152 @@
+:root {
+   --background: #1A181A;
+   --secondary-background: #1E1E1E;
+   --secondary-text: #7F7F7F;
+   --line-color: #6D6D6D;
+   --border-radius: 3px;
+
+}
+
+body, html { 
+   border: 0; 
+   margin: 0; 
+   padding: 0; 
+   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+   -webkit-font-smoothing: antialiased;
+   -moz-osx-font-smoothing: grayscale;
+}
+
+#map { 
+   height: 100vh; 
+   width: 100vw; 
+}
+
+#sidebar {
+   position: absolute;
+   margin: 15px;
+   padding: 15px 15px 0 15px;
+   right: 0;
+   background: var(--background);
+   z-index: 50000;
+   border-radius: var(--border-radius);
+   width: 290px;
+   font-size: 14px;
+   max-height: calc(100vh - 30px);
+}
+
+a {
+   color: #BBBBBB;
+   text-decoration: none;
+}
+
+a:hover {
+   color: white;
+   transition: .3s all;
+}
+
+h1 {
+   font-size: 19px;
+   font-weight: 500;
+   margin: 0px 0px 15px 0px;
+   color: white;
+}
+
+h2 {
+   font-size: 16px;
+   font-weight: 500;
+   margin: 0px 0px 15px 0;
+   color: white;
+}
+
+.desc {
+   font-size: 14px;
+   color: var(--secondary-text);
+   margin-bottom: 15px;
+}
+
+.group {
+   margin-bottom: 15px;
+}
+
+.selector-outside {
+   border-radius: 3px;
+   height: 30px;
+   width: 100%;
+   background: var(--secondary-background);
+   display: grid;
+   margin: 10px 0;
+   grid-template-columns: repeat(2, 1fr);
+}
+
+.selector-option {
+   color: var(--secondary-text);
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   cursor: pointer;
+   font-size: 13px;
+}
+
+.selector-active {
+   border: 1px solid white !important;
+   color: white;
+}
+.left-selector, .right-selector {
+   transition: .3s all;
+}
+.left-selector {
+   border: 1px solid var(--line-color);
+   border-top-left-radius: 3px;
+   border-bottom-left-radius: 3px;
+}
+
+.left-selector-active {
+   border: 1px solid white !important;
+   color: white;
+}
+
+.right-selector {
+   border: 1px solid var(--line-color);
+   border-top-right-radius: 3px;
+   border-bottom-right-radius: 3px;
+   border-left: none;
+}
+
+.right-selector-active {
+   border: 1px solid white !important;
+   color: white;
+}
+
+.legend-colors {
+   display: grid;
+}
+.legend-item {
+   height: 15px;
+}
+
+.legend-caption {
+   margin-top: 5px;
+   display: grid;
+}
+
+.legend-caption .desc {
+   font-size: 12px !important;
+   margin-bottom: 0;
+}
+
+
+#tooltip {
+   background: var(--background);
+   border-radius: var(--border-radius);
+   z-index: 49999;
+   /* height: 200px;
+   width: 200px; */
+   color: white;
+   position: absolute;
+   top: 0;
+   left: 0;
+   padding: 10px;
+   font-size: 14px;
+   pointer-events: none;
+   /* transition: .1s all; */
+}
