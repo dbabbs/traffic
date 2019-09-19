@@ -4,7 +4,7 @@ const $$ = (q) => document.querySelectorAll(q);
 //old: (working) mpZkNWzk
 const config = {
    token: 'ASCBZnCcvEMa-vbk9JXixN8',
-   space: 'D3QGt2ZV', //'0N3BxcpG'
+   space: 'OfjZl6yq', 
 }
 
 
@@ -52,30 +52,21 @@ const numBuckets = colors.length;
 
 const buckets = Array(colors.length + 1).fill(0).map((x,i) =>  (max / numBuckets) * i);
 console.log(buckets);
-const widths = Array(colors.length + 1).fill(0).map((x,i) => i * 0.5 + 1);
-const opacities = Array(colors.length + 1).fill(0).map((x,i) => i * 0.1 + 0.1);
-console.log(opacities);
+
 map.addDataSource(traffic).then(() => {
 
-   const styles = buckets.slice(0, buckets.length - 1).map((bucket, index) => {
-      const filter = index !== buckets.length - 2 ?
-         `properties.flow >= ${bucket} && properties.flow < ${buckets[index + 1]}` : 
-         `properties.flow >= ${bucket}`// && properties.sum < ${buckets[index + 1] + 1}`;
-      console.log(filter)
-      return {
-         "when": `$geometryType ^= 'line' && ${filter}`,
-         "renderOrder": 1000 + widths[index],
-         "technique": "solid-line",
-         "attr": {
-            "color": `${colors[index]}`,
-            "transparent": true,
-            "opacity": 1,
-            "metricUnit": "Pixel",
-            "lineWidth": widths[index]
-         }
+   const styles = [{
+      "when": `$geometryType ^= 'line'`,
+      "renderOrder": 1000,
+      "technique": "solid-line",
+      "attr": {
+         "color": `purple`,
+         "transparent": true,
+         "opacity": 1,
+         "metricUnit": "Pixel",
+         "lineWidth": 5
       }
-   });
-   console.table(styles.map(x => x.attr));
+   }];
 
    // console.log(styles);
    traffic.setStyleSet(styles);
