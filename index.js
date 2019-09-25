@@ -49,7 +49,14 @@ const traffic = new harp.OmvDataSource({
 const max = 40062;
 // const colors = ['#ffffcc','#c7e9b4','#7fcdbb','#41b6c4','#1d91c0','#225ea8','#0c2c84'];
 // const colors = ['#feebe2','#fcc5c0','#fa9fb5','#f768a1','#dd3497','#ae017e','#7a0177']
-const colors = ['#fff7f3','#fde0dd','#fcc5c0','#fa9fb5','#f768a1','#dd3497','#ae017e','#7a0177','#49006a']
+const colors = ['#8aa4ed',
+   '#83ade9',
+   '#7db5e6',
+   '#76bee2',
+   '#6fc6de',
+   '#69cfdb',
+   '#62d7d7'
+]
 // const colors = ['#f7fcf0','#e0f3db','#ccebc5','#a8ddb5','#7bccc4','#4eb3d3','#2b8cbe','#0868ac','#084081']
 const numBuckets = colors.length;
 
@@ -70,15 +77,16 @@ map.addDataSource(traffic).then(() => {
          "technique": "extruded-polygon",
          "attr": {
             "userData": `${index}`,
-            "defaultHeight": `${heights[index]}`,
+            "defaultHeight": index === 0 ? 100 : `${heights[index]}`,
             "constantHeight": true, //This is needed to avoid the "steps" between tile borders
             "lineColor": '#CECECE',
-            "lineWidth": index === 0 ? "0.1" : "0",
+            "lineWidth": 0, //index === 0 ? "0.1" : "0",
             "defaultColor": `${colors[index]}`,
             "color": `${colors[index]}`,
             "roughness": `0.6`,
             "metalness": `0.15`,
-            "side": 2
+            "side": 2,
+            "opacity": index === 0 ? "0.3" : "1",
          },
          "renderOrder": 200
       }

@@ -608,7 +608,7 @@
         "when": "$layer == 'water' && (($geometryType ^= 'polygon') && ($level <= 7))",
         "technique": "fill",
         "attr": {
-          "color": "#151A20"
+          "color": "#1C222C"
         },
         "renderOrder": 4
       },
@@ -617,7 +617,7 @@
         "when": "$layer == 'water' && (($geometryType ^= 'polygon') && ($level > 7))",
         "technique": "fill",
         "attr": {
-          "color": "#151A20"
+          "color": "#1C222C"
         },
         "renderOrder": 4
       },
