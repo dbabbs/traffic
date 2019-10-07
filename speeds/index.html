@@ -1,29 +1,25 @@
 <html>
-   <head>
-      <link rel="stylesheet" type="text/css" href="index.css">
-      
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.9.7/d3.js"></script>
-      <script src="https://unpkg.com/three@0.105.2/build/three.min.js"></script>
-      <script src="https://unpkg.com/@here/harp.gl/dist/harp.js"></script>
 
-      <!--Using harp.gl and three.js installed via npm/yarn-->
-      <!-- <script src="node_modules/three/build/three.min.js"></script>
-      <script src="node_modules/@here/harp.gl/dist/harp.js"></script> -->
+<head>
+   <link rel="stylesheet" type="text/css" href="index.css">
 
-      <!--Using latest master version of harp. This does unfortunately not work b/c
-          the decoder bundle cannot be loaded due to cors policy-->
-      <!-- <script src="harp.js"></script> -->
-   </head>
-   <body>
-      <div id="sidebar">
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.9.7/d3.js"></script>
+   <script src="https://unpkg.com/three@0.105.2/build/three.min.js"></script>
+   <script src="https://unpkg.com/@here/harp.gl/dist/harp.js"></script>
 
+</head>
+
+<body>
+   <div class="sidebar">
+      <div class="sidebar-content">
          <div class="group">
             <h1>Bay Area Large-Scale Traffic Flows</h1>
             <div class="desc">
                Description TBD
-            </div>      
+            </div>
             <div class="desc">
-               Berkeley Labs is simulating the vehicle flow rates and resulting congestion on each of the 2.2 million road links in the system.
+               Berkeley Labs is simulating the vehicle flow rates and resulting congestion on each of the 2.2 million
+               road links in the system.
             </div>
          </div>
 
@@ -51,24 +47,31 @@
          <div class="group">
             <h2>Attribution</h2>
             <div class="desc">
-               Traffic simulatation data, <a href="https://cs.lbl.gov/news-media/news/2019/mobiliti-a-game-changer-for-analyzing-traffic-congestion">Berkeley Lab.</a>
+               Traffic simulatation data, <a
+                  href="https://cs.lbl.gov/news-media/news/2019/mobiliti-a-game-changer-for-analyzing-traffic-congestion">Berkeley
+                  Lab.</a>
                Base map, <a href="https://here.com">&#169; <span id="year"></span> HERE Technologies.</a>
-               Made with HERE <a href="https://harp.gl">harp.gl</a> and <a href="https://developer.here.com/products/xyz">XYZ</a>.
+               Made with HERE <a href="https://harp.gl">harp.gl</a> and <a
+                  href="https://developer.here.com/products/xyz">XYZ</a>.
             </div>
             <div class="desc">
-               
+
             </div>
             <div class="desc">
-               
+
             </div>
          </div>
+      </div>
 
-      </div>
-      <div id="tooltip">
-         <div class="city"></div>
-         <div class="count"></div>
-      </div>
-      <canvas id="map"></canvas>
-      <script src="index.js"></script>
-   </body>
+
+
+   </div>
+   <div id="tooltip">
+      <div class="city"></div>
+      <div class="count"></div>
+   </div>
+   <canvas id="map"></canvas>
+   <script src="index.js"></script>
+</body>
+
 </html>

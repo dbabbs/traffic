@@ -7,6 +7,7 @@ const path = `${__dirname}/berkeley-test.geojson`;
 const stream = fs.createReadStream(path);
 
 const maxes = Array(24).fill(0);
+console.log(maxes);
 const parser = async () => {
    return new Promise(resolve => {
       Oboe(stream).node('!.features.*', row => {
@@ -27,7 +28,7 @@ const parser = async () => {
 
 (async () => {
    await parser();
-   console.log(JSON.stringify(maxes))
+   console.log(maxes)
    writer.finish();
 })();
 
