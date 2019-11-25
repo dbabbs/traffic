@@ -3,11 +3,9 @@ const $$ = (q) => document.querySelectorAll(q);
 
 //old: (working) mpZkNWzk
 const config = {
-   token: 'ASCBZnCcvEMa-vbk9JXixN8',
+   token: 'AB3ZAWjYReel1PtRaZPcpQA',
    space: 'pd6lpVsy', //'0N3BxcpG'
 }
-
-
 
 const map = new harp.MapView({
    canvas: $("#map"),
@@ -47,23 +45,17 @@ const traffic = new harp.OmvDataSource({
 });
 
 const max = 40062;
-// const colors = ['#ffffcc','#c7e9b4','#7fcdbb','#41b6c4','#1d91c0','#225ea8','#0c2c84'];
-// const colors = ['#feebe2','#fcc5c0','#fa9fb5','#f768a1','#dd3497','#ae017e','#7a0177']
 const colors = ['#fff7f3','#fde0dd','#fcc5c0','#fa9fb5','#f768a1','#dd3497','#ae017e','#7a0177','#49006a']
-// const colors = ['#f7fcf0','#e0f3db','#ccebc5','#a8ddb5','#7bccc4','#4eb3d3','#2b8cbe','#0868ac','#084081']
 const numBuckets = colors.length;
 
 const buckets = Array(colors.length + 1).fill(0).map((x,i) =>  (max / numBuckets) * i);
-console.log(buckets);
-// const heights = [100, 4000, 8000, 12000, 16000, 20000, 24000];
 const heights = Array(colors.length + 1).fill(0).map((x,i) => i * 4000);
-console.log(heights);
 map.addDataSource(traffic).then(() => {
 
    const styles = buckets.slice(0, buckets.length - 1).map((bucket, index) => {
       const filter = index !== buckets.length - 2 ?
-         `properties.sum >= ${bucket} && properties.sum < ${buckets[index + 1]}` : 
-         `properties.sum >= ${bucket}`// && properties.sum < ${buckets[index + 1] + 1}`;
+         `sum >= ${bucket} && sum < ${buckets[index + 1]}` : 
+         `sum >= ${bucket}`// && properties.sum < ${buckets[index + 1] + 1}`;
       return {
          "description": "Buildings geometry",
          "when": `$geometryType == 'polygon' && ${filter}`,
@@ -157,7 +149,6 @@ map.canvas.onmousemove = async e => {
       return;
    }
    const i = intersections.find(x => x.hasOwnProperty('userData') && x.userData.$layer === config.space);
-
    if (i === undefined) {
       $('#tooltip').style.display = 'none';
       return;
@@ -171,12 +162,12 @@ map.canvas.onmousemove = async e => {
    if (currId !== prevId) {
       const label = geocodes[currId];
       if (label === undefined) {
-         const coordinates = [i.userData['properties.centroid.1'], i.userData['properties.centroid.0']];
-         $('#tooltip .city').innerHTML = await geocode(coordinates, currId);
+         const [lng, lat] = JSON.parse(i.userData.centroid);
+         $('#tooltip .city').innerHTML = await geocode([lat, lng], currId);
       } else {
          $('#tooltip .city').innerHTML = label;
       }
-      $('#tooltip .count').innerHTML =  numberWithCommas(i.userData['properties.sum']) + '<span class="desc"> trip departures</span>';
+      $('#tooltip .count').innerHTML =  numberWithCommas(i.userData.sum) + '<span class="desc"> trip departures</span>';
    }
    prevId = currId;
 }

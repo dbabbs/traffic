@@ -1,5 +1,6 @@
 .DS_Store
 prep
+prep2
 data
 node_modules
 berkeley-test.json

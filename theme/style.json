@@ -67,7 +67,15 @@
   "fontCatalogs": [
     {
       "name": "fira",
-      "url": "fonts/Default_FontCatalog.json"
+      "url": "https://assets.vector.hereapi.com/fonts/Default_FontCatalog.json"
+    }
+  ],
+
+  "poiTables": [
+    {
+      "name": "tzPoiTable",
+      "url": "https://assets.vector.hereapi.com/icons/berlin/poi_table_maki.json",
+      "useAltNamesForKey": true
     }
   ],
   "styles": {
@@ -1561,17 +1569,6 @@
           "backgroundAlpha": 0.5
         },
         "final": true
-      },
-      {
-        "description": "POIs in tilezen format",
-        "when": "$layer == 'pois' && 'all'",
-        "technique": "text",
-        "attr": {
-          "color": "#646E77",
-          "size": 14.4,
-          "backgroundColor": "#F6F9FD",
-          "backgroundAlpha": 0.5
-        }
       },
       {
         "description": "Buildings geometry",
